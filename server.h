@@ -6,34 +6,21 @@
 #include <QTcpSocket>
 #include <QAbstractSocket>
 #include <QIODevice>
-#include "client.h"
-
-class Client;
+#include "client.h";
 
 class Server : public QObject
 {
-
     Q_OBJECT
-
-
 public:
     explicit Server();
     ~Server();
     void doConnect();
-    void removeFromList(QHostAddress addr);
-
-    QList<QTcpSocket *> getConnectedClients() const;
-    void setConnectedClients(const QList<QTcpSocket *> &value);
 
 private:
-    Client *client;
-    QTcpServer *server;
     QTcpSocket *clientConnection;
-    QList<QTcpSocket *> connectedClients;
+    QTcpServer *server;
 
-    int counterOfConn;
-
-
+    std::vector<QHostAddress> connectedClients;
 
 
 signals:

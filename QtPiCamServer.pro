@@ -11,8 +11,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     server.cpp \
-    client.cpp \
-    camera.cpp
+    client.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -27,5 +26,4 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 HEADERS += \
     server.h \
-    client.h \
-    camera.h
+    client.h

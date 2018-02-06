@@ -20,7 +20,7 @@ private:
     QTcpSocket *clientConnection;
     QTcpServer *server;
 
-    std::vector<QHostAddress> connectedClients;
+    QList<QTcpSocket*> connectedClients;
 
 
 signals:

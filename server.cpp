@@ -34,14 +34,24 @@ void Server::newConnection()
 
         clientConnection = server->nextPendingConnection();
 
-        connectedClients.push_back(clientConnection->peerAddress()); //Add a connected client to the list
+        connectedClients.append(clientConnection); //Add a connected client to the list
         //currently connected threads
-        for(std::vector<QHostAddress>::iterator it = connectedClients.begin(); it != connectedClients.end(); it++)
+
+        for(int i = 0; i<connectedClients.size(); i++)
         {
-            qDebug()<<*it;
-            qDebug()<<"\n";
+            if(connectedClients.at(i) == clientConnection)
+            {
+                qDebug()<<"multiple times connected";
+                clientConnection = connectedClients.at(i);
+            }
+            else
+            {
+                qDebug()<<"First time connected";
+
+            }
         }
-        Client *client= new Client(clientConnection); //create new client
+            Client *client= new Client(clientConnection); //create new clien
+
 
 
    }

@@ -7,6 +7,8 @@
 #include <QAbstractSocket>
 #include <QIODevice>
 #include <QDebug>
+#include <camera.h>
+#include <QProcess>
 
 
 class Client  : public QObject
@@ -21,8 +23,11 @@ private:
     QTcpSocket *clientSocket;
     bool verificationRequired;
     int password;
-    QByteArray clientMessage;
-    void selectOperation();
+    void checkPassword(QByteArray arr);
+    char cameraSetting;
+    char closeConnParam;
+    char rebootParam;
+    QObject *parent;
 
 
 public slots:

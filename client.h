@@ -1,6 +1,5 @@
 #ifndef CLIENT_H
 #define CLIENT_H
-
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -19,7 +18,6 @@ public:
     Client(QTcpSocket *conn);
 
 private:
-
     QTcpSocket *clientSocket;
     bool verificationRequired;
     int password;

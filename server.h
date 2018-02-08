@@ -23,9 +23,6 @@ private:
     QList<QTcpSocket*> connectedClients;
 
 
-signals:
-
-
 public slots:
     void newConnection();
 

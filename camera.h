@@ -5,14 +5,18 @@
 #include <time.h>
 #include <QImage>
 #include <QBuffer>
+#include <QTcpSocket>
 
 class Camera : public QObject
 {
     Q_OBJECT
 public:
     Camera(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam,
-           char infraredOnParam, char takePicParam);
-    QByteArray takeImage();
+           char infraredOnParam, char takePicParam, QTcpSocket *socket);
+    void takeImage();
+
+public slots:
+    void sendPicture();
 
 private:
     QString rotationHorizontal;
@@ -23,6 +27,10 @@ private:
     QString takePic;
     QString closeConn;
     QString off;
+
+    char buffer [80];
+
+    QTcpSocket *clientSocket;
 
     QImage image;
 

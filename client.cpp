@@ -9,7 +9,7 @@ Client::Client(QTcpSocket *conn)
     connect(clientSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
     qDebug()<<"new socket created";
     verificationRequired = true;
-    password = '3'; //User verificational password
+    password = 'theNextLevel'; //User verificational password
 
 
 }
@@ -63,7 +63,7 @@ void Client::readyRead()
             {
 
 //               Check if user would reboot or close connection
-                QString command = "reboot now";
+                QString command = "sudo reboot now";
                 QProcess *rebootProcess = new QProcess(parent);
 
                 const char zero = '0';
@@ -76,10 +76,11 @@ void Client::readyRead()
                         qDebug()<<"reboot or close conn not active";
                         //Check completeted, create new camera object
                         Camera *camera = new Camera(data[0], data[1], data[2],
-                                data[3], data[4], data[5]);
-                        clientSocket->write(camera->takeImage());
+                                data[3], data[4], data[5], clientSocket);
+                        camera->takeImage();
                     }
                     else
+
                     {
                         qDebug()<<"Restarting server";
                         clientSocket->write("restarting");
@@ -88,11 +89,10 @@ void Client::readyRead()
                 }
                 else
                 {
-                    (clientSocket->close());
+                    qDebug()<<"Closing connection";
+                    disconnected();
                 }
-
             }
-
     }
 
 }
@@ -101,4 +101,5 @@ void Client::disconnected()
 {
     qDebug()<<"Connection closed";
     clientSocket->close();
+    delete clientSocket;
 }

@@ -30,30 +30,35 @@ void Server::newConnection()
     if(server->hasPendingConnections())
     {
         qDebug()<<"Pending connection";
-        qDebug()<<"Checking Permissions...";
 
         clientConnection = server->nextPendingConnection();
 
-        connectedClients.append(clientConnection); //Add a connected client to the list
+        //connectedClients.append(clientConnection); //Add a connected client to the list
         //currently connected threads
-
-        for(int i = 0; i<connectedClients.size(); i++)
+        if(connectedClients.size() == 0)
         {
-            if(connectedClients.at(i) == clientConnection)
+            qDebug()<<("You're my first one");
+            connectedClients.append(clientConnection);
+        }
+        else
+        {
+            for(int i = 0; i<connectedClients.size(); i++)
             {
-                qDebug()<<"multiple times connected";
-                clientConnection = connectedClients.at(i);
-            }
-            else
-            {
-                qDebug()<<"First time connected";
+                if(connectedClients.at(i) == clientConnection)
+                {
+                    qDebug()<<"multiple times connected";
+                    clientConnection = connectedClients.at(i);
+                }
+                else
+                {
+                    qDebug()<<"First time connected";
+                    connectedClients.append(clientConnection);
 
+                }
             }
         }
-            Client *client= new Client(clientConnection); //create new clien
 
-
-
+            Client *client= new Client(clientConnection); //create new client
    }
 
 }

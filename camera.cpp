@@ -1,29 +1,25 @@
 #include "camera.h"
 
 Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam,
-               char infraredOnParam, char takePicParam)
+               char infraredOnParam, char takePicParam, QTcpSocket *socket)
 {
     parent = nullptr;
+    clientSocket = socket;
 
     takePic = takePicParam;
     qDebug()<<"0"<<"0"<<takePicParam<<infraredOnParam<<resolutionParam<<exposureParam<<rotationHorizontalParam<<rotationVerticalParam;
 
-    (rotationVerticalParam == inactive)?(rotationVertical = ""):(rotationVertical = " -vf");
-    (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -hf");
+    (rotationVerticalParam == inactive)?(rotationVertical = ""):(rotationVertical = " -rot 90 ");
+    (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot 180   ");
     (exposureParam == inactive)?(exposure = "-ex auto"):(exposure = "-ex night");
     (resolutionParam == inactive)?(resolution = " -w 640 -h 480"):(resolution = " -w 1920 -h 1080");
     (infraredOnParam == inactive)?(infraredOn = "infraredOff"):(infraredOn = "infrared on");
-
-
-
-
-
 }
 
-QByteArray Camera::takeImage()
+void Camera::takeImage()
 {
 
-    if(takePic == "1") //temporary changed
+    if(takePic == "0") //temporary changed
     {
         qDebug()<<"No pic";
     }
@@ -32,7 +28,6 @@ QByteArray Camera::takeImage()
         //GetTime For more informations visit the cpp reference
         time_t rawtime;
         struct tm *timeinfo;
-        char buffer [80];
 
         time(&rawtime);
         timeinfo = localtime(&rawtime);
@@ -43,18 +38,19 @@ QByteArray Camera::takeImage()
         qDebug()<< command;
 
         QProcess *process = new QProcess(parent);
+        connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
         process->start(command);
-        //qDebug()<<takePic;
-        QString pathToGlory = (QString)buffer + "jpg";
-
-        image.load(pathToGlory);
-        QByteArray imageArray;
-        QBuffer imageBuffer(&imageArray);
-        image.save(&imageBuffer, "jpg");
-
-        return imageArray;
-
-
     }
+}
+
+void Camera::sendPicture()
+{
+    QString pathToGlory = (QString)buffer + "jpg";
+
+    image.load(pathToGlory);
+    QByteArray imageArray;
+    QBuffer imageBuffer(&imageArray);
+    image.save(&imageBuffer, "jpg");
+    clientSocket->write(imageArray);
 }
 

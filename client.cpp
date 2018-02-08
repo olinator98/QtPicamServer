@@ -99,6 +99,7 @@ void Client::readyRead()
 
 void Client::disconnected()
 {
+    emit this->signalDisconnected(clientSocket);
     qDebug()<<"Connection closed";
     clientSocket->close();
     delete clientSocket;

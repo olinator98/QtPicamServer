@@ -6,7 +6,7 @@
 #include <QTcpSocket>
 #include <QAbstractSocket>
 #include <QIODevice>
-#include "client.h";
+#include "client.h"
 
 class Server : public QObject
 {
@@ -16,8 +16,12 @@ public:
     ~Server();
     void doConnect();
 
+
+    QList<QTcpSocket *> getConnectedClients() const;
+    void setConnectedClients(const QList<QTcpSocket *> &value);
+
 private:
-    QTcpSocket *clientConnection;
+    QTcpSocket *clientSocket;
     QTcpServer *server;
 
     QList<QTcpSocket*> connectedClients;
@@ -25,6 +29,7 @@ private:
 
 public slots:
     void newConnection();
+    void removeFromList(QTcpSocket *clientSocket); //if signalDisconnected is true, remove the item from the QList
 
 };
 

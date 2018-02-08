@@ -27,11 +27,15 @@ private:
     char rebootParam;
     QObject *parent;
 
+signals:
+    void signalDisconnected(QTcpSocket *clientSocket); //Signal if client is disconnected
+
 
 public slots:
     void bytesWritten(qint64 bytes);
     void readyRead();
     void disconnected();
+
 };
 
 #endif // CLIENT_H

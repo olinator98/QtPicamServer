@@ -27,11 +27,15 @@ private:
     char rebootParam;
     QObject *parent;
 
+
+    QImage image;
+
 signals:
     void signalDisconnected(QTcpSocket *clientSocket); //Signal if client is disconnected
 
 
 public slots:
+    void sendImage(QString pathToImage);
     void bytesWritten(qint64 bytes);
     void readyRead();
     void disconnected();

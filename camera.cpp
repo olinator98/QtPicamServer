@@ -1,10 +1,9 @@
 #include "camera.h"
 
 Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam,
-               char infraredOnParam, char takePicParam, QTcpSocket *socket)
+               char infraredOnParam, char takePicParam)
 {
     parent = nullptr;
-    clientSocket = socket;
 
     takePic = takePicParam;
     qDebug()<<"0"<<"0"<<takePicParam<<infraredOnParam<<resolutionParam<<exposureParam<<rotationHorizontalParam<<rotationVerticalParam;
@@ -19,7 +18,7 @@ Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char ex
 void Camera::takeImage()
 {
 
-    if(takePic == "0") //temporary changed
+    if(takePic == "0")
     {
         qDebug()<<"No pic";
     }
@@ -47,10 +46,6 @@ void Camera::sendPicture()
 {
     QString pathToGlory = (QString)buffer + "jpg";
 
-    image.load(pathToGlory);
-    QByteArray imageArray;
-    QBuffer imageBuffer(&imageArray);
-    image.save(&imageBuffer, "jpg");
-    clientSocket->write(imageArray);
-}
+    emit this->imageReady(pathToGlory);
 
+}

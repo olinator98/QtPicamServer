@@ -7,6 +7,7 @@ Client::Client(QTcpSocket *conn)
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
     connect(clientSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
     connect(clientSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
     qDebug()<<"new socket created";
     verificationRequired = true;
     password = 'theNextLevel'; //User verificational password
@@ -29,6 +30,17 @@ void Client::checkPassword(QByteArray arr)
        qDebug()<<"Connection closed";
        clientSocket->close();
     }
+}
+
+void Client::sendImage(QString pathToImage)
+{
+
+    qDebug()<<"Hello Hansueli";
+    image.load(pathToImage);
+    QByteArray imageArray;
+    QBuffer imageBuffer(&imageArray);
+    image.save(&imageBuffer, "jpg");
+    clientSocket->write(imageArray);
 }
 
 void Client::bytesWritten(qint64 bytes)
@@ -69,14 +81,15 @@ void Client::readyRead()
                 const char zero = '0';
                 if (data[6] == zero)
                 {
-                    qDebug()<<"3";
-
                     if(data[7] == zero)
                     {
                         qDebug()<<"reboot or close conn not active";
                         //Check completeted, create new camera object
                         Camera *camera = new Camera(data[0], data[1], data[2],
-                                data[3], data[4], data[5], clientSocket);
+                                data[3], data[4], data[5]);
+
+                        connect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)));
+                        //Connect the slot for sending the picture to the Object
                         camera->takeImage();
                     }
                     else

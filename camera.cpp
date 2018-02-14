@@ -4,7 +4,6 @@ Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char ex
                char infraredOnParam, char takePicParam)
 {
     parent = nullptr;
-
     takePic = takePicParam;
     qDebug()<<"0"<<"0"<<takePicParam<<infraredOnParam<<resolutionParam<<exposureParam<<rotationHorizontalParam<<rotationVerticalParam;
 
@@ -17,7 +16,6 @@ Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char ex
 
 void Camera::takeImage()
 {
-
     if(takePic == "0")
     {
         qDebug()<<"No pic";
@@ -31,7 +29,7 @@ void Camera::takeImage()
         time(&rawtime);
         timeinfo = localtime(&rawtime);
 
-        strftime(buffer, 80, "Pic_%a_%F_%I:%M%p.", timeinfo);
+        strftime(buffer, 80, "Image_%a_%F_%I:%M%p.", timeinfo);
         qDebug()<<buffer;
         command = "raspistill "+rotationVertical+rotationHorizontal + exposure + resolution +" -o "+buffer+"jpg";
         qDebug()<< command;
@@ -45,7 +43,5 @@ void Camera::takeImage()
 void Camera::sendPicture()
 {
     QString pathToGlory = (QString)buffer + "jpg";
-
     emit this->imageReady(pathToGlory);
-
 }

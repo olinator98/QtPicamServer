@@ -1,11 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_
+
 #include <QDebug>
 #include <QProcess>
 #include <time.h>
 #include <QImage>
 #include <QBuffer>
-#include <QTcpSocket>
 
 class Camera : public QObject
 {
@@ -32,19 +32,11 @@ private:
     QString takePic;
     QString closeConn;
     QString off;
-
     char buffer [80];
-
-    QTcpSocket *clientSocket;
-
-
     QObject *parent;
     QString command;
 
-
-
     const char inactive = '0';
-
 
 };
 

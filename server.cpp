@@ -23,19 +23,6 @@ void Server::doConnect()
     server->listen(QHostAddress::Any, 12345); //Let the server listening
 }
 
-QList<QTcpSocket *> Server::getConnectedClients() const
-{
-    return connectedClients;
-}
-
-void Server::setConnectedClients(const QList<QTcpSocket *> &value)
-{
-    connectedClients = value;
-}
-
-
-
-
 void Server::newConnection()
 {
     if(server->hasPendingConnections())
@@ -74,10 +61,10 @@ void Server::newConnection()
             }
         }
 
-            Client *client= new Client(clientSocket); //create new client
-            connect(client, SIGNAL(signalDisconnected(QTcpSocket*)), this, SLOT(removeFromList(QTcpSocket*)));
+        Client *client= new Client(clientSocket); //create new client
+        connect(client, SIGNAL(signalDisconnected(QTcpSocket*)), this, SLOT(removeFromList(QTcpSocket*))); //Signal when socket disconnects
 
-   }
+    }
 
 }
 

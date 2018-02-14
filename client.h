@@ -1,13 +1,17 @@
 #ifndef CLIENT_H
 #define CLIENT_H
+
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QAbstractSocket>
 #include <QIODevice>
 #include <QDebug>
-#include <camera.h>
 #include <QProcess>
+#include <QFile>
+
+#include <camera.h>
+
 
 
 class Client  : public QObject
@@ -16,23 +20,18 @@ class Client  : public QObject
 
 public:
     Client(QTcpSocket *conn);
-
 private:
     QTcpSocket *clientSocket;
     bool verificationRequired;
-    int password;
+    const char* password;
     void checkPassword(QByteArray arr);
     char cameraSetting;
     char closeConnParam;
     char rebootParam;
     QObject *parent;
 
-
-    QImage image;
-
 signals:
     void signalDisconnected(QTcpSocket *clientSocket); //Signal if client is disconnected
-
 
 public slots:
     void sendImage(QString pathToImage);

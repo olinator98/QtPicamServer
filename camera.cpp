@@ -11,7 +11,18 @@ Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char ex
     (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot 180   ");
     (exposureParam == inactive)?(exposure = "-ex auto"):(exposure = "-ex night");
     (resolutionParam == inactive)?(resolution = " -w 640 -h 480"):(resolution = " -w 1920 -h 1080");
-    (infraredOnParam == inactive)?(infraredOn = "infraredOff"):(infraredOn = "infrared on");
+
+    if(infraredOnParam == inactive)
+    {
+        (infraredOn = "infraredOff");
+        bcm2835_gpio_write(PIN,LOW );
+    }
+    else
+    {
+        (infraredOn = "infrared on");
+        bcm2835_gpio_write(PIN,HIGH);
+        qDebug() << "IR off";
+    }
 }
 
 void Camera::takeImage()

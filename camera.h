@@ -1,19 +1,24 @@
 #ifndef CAMERA_H
 #define CAMERA_
+
 #include <QDebug>
 #include <QProcess>
 #include <time.h>
 #include <QImage>
 #include <QBuffer>
-#include <QTcpSocket>
 
 class Camera : public QObject
 {
     Q_OBJECT
 public:
     Camera(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam,
-           char infraredOnParam, char takePicParam, QTcpSocket *socket);
+           char infraredOnParam, char takePicParam);
     void takeImage();
+
+    QProcess *process;
+
+signals:
+    void imageReady(QString pathToImage);
 
 public slots:
     void sendPicture();
@@ -27,20 +32,11 @@ private:
     QString takePic;
     QString closeConn;
     QString off;
-
     char buffer [80];
-
-    QTcpSocket *clientSocket;
-
-    QImage image;
-
     QObject *parent;
     QString command;
 
-
-
     const char inactive = '0';
-
 
 };
 

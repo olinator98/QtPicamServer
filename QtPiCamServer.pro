@@ -1,5 +1,4 @@
 QT += core network gui
-SS
 CONFIG += c++11
 
 TARGET = QtPiCamServer

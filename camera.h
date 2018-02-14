@@ -6,6 +6,7 @@
 #include <time.h>
 #include <QImage>
 #include <QBuffer>
+#include "bcm2835.h"
 
 class Camera : public QObject
 {

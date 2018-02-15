@@ -1,33 +1,35 @@
 #include "camera.h"
 
-Camera::Camera(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam,
-               char infraredOnParam, char takePicParam)
+Camera *Camera::instance = 0;
+
+Camera::Camera()
 {
     parent = nullptr;
-    takePic = takePicParam;
-    qDebug()<<"0"<<"0"<<takePicParam<<infraredOnParam<<resolutionParam<<exposureParam<<rotationHorizontalParam<<rotationVerticalParam;
-
-    (rotationVerticalParam == inactive)?(rotationVertical = ""):(rotationVertical = " -rot 90 ");
-    (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot 180   ");
-    (exposureParam == inactive)?(exposure = "-ex auto"):(exposure = "-ex night");
-    (resolutionParam == inactive)?(resolution = " -w 640 -h 480"):(resolution = " -w 1920 -h 1080");
-
-    if(infraredOnParam == inactive)
-    {
-        (infraredOn = "infraredOff");
-        bcm2835_gpio_write(PIN,LOW );
-    }
-    else
-    {
-        (infraredOn = "infrared on");
-        bcm2835_gpio_write(PIN,HIGH);
-        qDebug() << "IR off";
-    }
+    process = nullptr;
 }
 
 void Camera::takeImage()
 {
-    if(takePic == "0")
+        mutex.lock();
+        QProcess *process = new QProcess(parent);
+        connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
+        process->start(cameraCommand);
+        mutex.unlock();
+
+}
+
+Camera* Camera::getInstance()
+{
+    //Singleton
+    if(!Camera::instance)
+        Camera::instance = new Camera();
+    return Camera::instance;
+}
+
+
+void Camera::setCameraSettings(CameraSettings set)
+{
+    if(set.getTakePic() == "0")
     {
         qDebug()<<"No pic";
     }
@@ -41,18 +43,24 @@ void Camera::takeImage()
         timeinfo = localtime(&rawtime);
 
         strftime(buffer, 80, "Image_%a_%F_%I:%M%p.", timeinfo);
-        qDebug()<<buffer;
-        command = "raspistill "+rotationVertical+rotationHorizontal + exposure + resolution +" -o "+buffer+"jpg";
-        qDebug()<< command;
-
-        QProcess *process = new QProcess(parent);
-        connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
-        process->start(command);
+        if(set.getInfraredOn())
+        {
+            bcm2835_gpio_write(PIN,HIGH);
+        }
+        else
+        {
+            bcm2835_gpio_write(PIN,LOW );
+        }
+        cameraCommand = "raspistill"+set.getRotationVertical()+set.getRotationHorizontal()+set.getExposure()+set.getResolution()+" -o "+buffer+"jpg";
+        qDebug()<<cameraCommand;
+        takeImage();
     }
 }
+
 
 void Camera::sendPicture()
 {
     QString pathToGlory = (QString)buffer + "jpg";
     emit this->imageReady(pathToGlory);
 }
+

@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFile>
+#include <camerasettings.h>
 
 #include <camera.h>
 
@@ -28,7 +29,10 @@ private:
     char cameraSetting;
     char closeConnParam;
     char rebootParam;
+    QByteArray cameraSettingsArr;
     QObject *parent;
+    Camera *camera;
+    void createSettings();
 
 signals:
     void signalDisconnected(QTcpSocket *clientSocket); //Signal if client is disconnected

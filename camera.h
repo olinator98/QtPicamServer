@@ -1,5 +1,5 @@
 #ifndef CAMERA_H
-#define CAMERA_
+#define CAMERA_H
 
 #include <QDebug>
 #include <QProcess>
@@ -7,38 +7,32 @@
 #include <QImage>
 #include <QBuffer>
 #include "bcm2835.h"
+#include <QMutex>
+#include "camerasettings.h"
+
+
+
 
 class Camera : public QObject
 {
     Q_OBJECT
 public:
-    Camera(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam,
-           char infraredOnParam, char takePicParam);
     void takeImage();
-
-    QProcess *process;
-
+    static Camera *getInstance();
+    void setCameraSettings(CameraSettings set);
 signals:
     void imageReady(QString pathToImage);
-
 public slots:
     void sendPicture();
-
 private:
-    QString rotationHorizontal;
-    QString rotationVertical;
-    QString exposure;
-    QString resolution;
-    QString infraredOn;
-    QString takePic;
-    QString closeConn;
-    QString off;
+    Camera();
     char buffer [80];
     QObject *parent;
     QString command;
-
-    const char inactive = '0';
-
+    QProcess *process;
+    QString cameraCommand;
+    QMutex mutex;
+    static Camera *instance;
 };
 
 #endif // CAMERA_H

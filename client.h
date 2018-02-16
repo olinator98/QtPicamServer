@@ -39,10 +39,8 @@ signals:
 
 public slots:
     void sendImage(QString pathToImage);
-    void bytesWritten(qint64 bytes);
     void readyRead();
     void disconnected();
-
 };
 
 #endif // CLIENT_H

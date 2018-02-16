@@ -27,17 +27,13 @@ void Server::newConnection()
 {
     if(server->hasPendingConnections())
     {
-        qDebug()<<"Pending connection";
-
         clientSocket = server->nextPendingConnection();
 
-        //connectedClients.append(clientSocket); //Add a connected client to the list
         //currently connected threads
 
         //Looks if theres a already a connected client
         if(connectedClients.size() == 0)
         {
-            qDebug()<<("You're my first one");
             connectedClients.append(clientSocket);
         }
         else
@@ -48,14 +44,12 @@ void Server::newConnection()
                 //looks if client is already connected to the server
                 if(connectedClients.at(i) == clientSocket)
                 {
-                    qDebug()<<"multiple times connected";
                     clientSocket = connectedClients.at(i);
                     //use the socket from the list, don't create a new one
                 }
                 else
                 {
                     //create a new one and add it to the QList
-                    qDebug()<<"First time connected";
                     connectedClients.append(clientSocket);
                 }
             }
@@ -76,12 +70,9 @@ void Server::removeFromList(QTcpSocket *clientSocket)
         if(connectedClients.at(i) == clientSocket)
         {
             connectedClients.removeAt(i);
-            qDebug()<<"Client removed from list";
-            qDebug()<<connectedClients.size();
         }
         else
         {
-            qDebug()<<"Not found";
         }
     }
 }

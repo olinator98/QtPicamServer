@@ -8,13 +8,22 @@ Camera::Camera()
     process = nullptr;
 }
 
+Camera::~Camera()
+{
+    if(Camera::instance != NULL)
+    {
+       delete Camera::instance;
+       Camera::instance = NULL;
+    }
+}
+
 void Camera::takeImage()
 {
-        mutex.lock();
-        QProcess *process = new QProcess(parent);
-        connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
-        process->start(cameraCommand);
-        mutex.unlock();
+    mutex.lock();
+    QProcess *process = new QProcess(parent);
+    connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
+    process->start(cameraCommand);
+    mutex.unlock();
 
 }
 
@@ -51,8 +60,7 @@ void Camera::setCameraSettings(CameraSettings set)
         {
             bcm2835_gpio_write(PIN,LOW );
         }
-        cameraCommand = "raspistill"+set.getRotationVertical()+set.getRotationHorizontal()+set.getExposure()+set.getResolution()+" -o "+buffer+"jpg";
-        qDebug()<<cameraCommand;
+        cameraCommand = "raspistill -n"+set.getRotationVertical()+set.getRotationHorizontal()+set.getExposure()+set.getResolution()+" -o "+buffer+"jpg";
         takeImage();
     }
 }
@@ -60,6 +68,7 @@ void Camera::setCameraSettings(CameraSettings set)
 
 void Camera::sendPicture()
 {
+    qDebug()<<"Image taken";
     QString pathToGlory = (QString)buffer + "jpg";
     emit this->imageReady(pathToGlory);
 }

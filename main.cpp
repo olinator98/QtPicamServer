@@ -12,9 +12,7 @@ int main(int argc, char *argv[])
     bcm2835_gpio_write(PIN,LOW);
 
     QCoreApplication a(argc, argv);
-
     Server server;
     server.doConnect();
-
     return a.exec();
 }

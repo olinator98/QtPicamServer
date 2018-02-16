@@ -17,6 +17,7 @@ private:
     QTcpSocket *clientSocket;
     QTcpServer *server;
     QList<QTcpSocket*> connectedClients;
+    Client *client;
 public slots:
     void newConnection();
     void removeFromList(QTcpSocket *clientSocket); //if signalDisconnected is true, remove the item from the QList 

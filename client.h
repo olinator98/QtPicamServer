@@ -22,6 +22,7 @@ class Client  : public QObject
 public:
     Client(QTcpSocket *conn);
 private:
+
     QTcpSocket *clientSocket;
     bool verificationRequired;
     const char* password;
@@ -33,6 +34,7 @@ private:
     QObject *parent;
     Camera *camera;
     void createSettings();
+
 
 signals:
     void signalDisconnected(QTcpSocket *clientSocket); //Signal if client is disconnected

@@ -43,7 +43,10 @@ void Server::newConnection()
                 //looks if client is already connected to the server
                 if(connectedClients.at(i) == clientSocket)
                 {
-                    clientSocket = connectedClients.at(i);
+                    qDebug()<<"Sorry, already connected";
+                    delete clientSocket;
+                    return;
+//                    clientSocket = connectedClients.at(i);
                     //use the socket from the list, don't create a new one
                 }
                 else
@@ -54,7 +57,7 @@ void Server::newConnection()
             }
         }
         qDebug()<<"IP-Address: "<<clientSocket->peerAddress();
-        Client *client= new Client(clientSocket); //create new client
+        client = new Client(clientSocket);
         connect(client, SIGNAL(signalDisconnected(QTcpSocket*)), this, SLOT(removeFromList(QTcpSocket*))); //Signal when socket disconnects
 
     }
@@ -66,13 +69,14 @@ void Server::removeFromList(QTcpSocket *clientSocket)
     //delete the disconnected socket from the list
     for(int i = 0; i<connectedClients.size(); i++)
     {
-        if(connectedClients.at(i) == clientSocket)
+        if(connectedClients.at(i)->peerAddress() == clientSocket->peerAddress())
         {
+            qDebug()<<"removing "<<connectedClients.at(i)->peerAddress();
             connectedClients.removeAt(i);
+
         }
         else
         {
-            qDebug()<<"Not found";
         }
     }
 }

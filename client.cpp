@@ -5,10 +5,8 @@ Client::Client(QTcpSocket *conn)
     parent = nullptr;
     clientSocket = conn;
     connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(clientSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(bytesWritten(qint64)));
     connect(clientSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 
-    qDebug()<<"new socket created";
     verificationRequired = true;
     password = "theNextLevel"; //User verification password
 }
@@ -17,8 +15,9 @@ void Client::checkPassword(QByteArray arr)
 {
     if(arr.contains(password)) //check if password is correct
     {
-        qDebug()<<"Connection ethablished";
+        qDebug()<<"\nConnection esthablished from client ";
         verificationRequired = false;
+        qDebug()<<clientSocket->peerAddress();
         readyRead();
     }
     else
@@ -33,11 +32,9 @@ void Client::checkPassword(QByteArray arr)
 void Client::createSettings()
 {
     char *data = cameraSettingsArr.data();
-    qDebug()<<data;
-    qDebug()<<cameraSettingsArr.size();
     if(cameraSettingsArr.size() == 8)
     {
-        //               Check if user would reboot or close connection
+        //Check if user would reboot or close connection
         QString command = "sudo reboot now";
         QProcess *rebootProcess = new QProcess(parent);
 
@@ -46,7 +43,6 @@ void Client::createSettings()
         {
             if(data[7] == zero)
             {
-                qDebug()<<"reboot or close conn not active";
                 //Check completeted, create new camera object
 
                 CameraSettings *settings = new CameraSettings(data[0], data[1], data[2], data[3], data[4], data[5]);
@@ -56,9 +52,9 @@ void Client::createSettings()
                 camera->setCameraSettings(*settings);
                     //camera = new Camera(data[0], data[1], data[2], data[3], data[4], data[5]);
 
-                connect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)));
+                connect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)),Qt::UniqueConnection);
                 //Connect the slot for sending the picture to the Object
-                //camera->takeImage();
+                //IMPORTANT: Qt::UniqueConnection is necessary, because otherwise the signal will be emitted multiple times
             }
             else
             {
@@ -70,7 +66,7 @@ void Client::createSettings()
         else
         {
             qDebug()<<"Closing connection";
-            disconnected();
+            clientSocket->disconnectFromHost();
         }
     }
 
@@ -78,7 +74,6 @@ void Client::createSettings()
 
 void Client::sendImage(QString pathToImage)
 {
-
     QDataStream s(clientSocket);
     QByteArray imageArray;
     //Write a QFile to the stream (image as QFile)
@@ -89,8 +84,6 @@ void Client::sendImage(QString pathToImage)
 
     qint32 length = data.size();
     s << length;
-    qDebug()<<length;
-    //clientSocket->write(reinterpret_cast<char *>(&length), sizeof(length));
 
     while(!data.atEnd())
     {
@@ -99,11 +92,8 @@ void Client::sendImage(QString pathToImage)
         clientSocket->write(imageArray);
         clientSocket->waitForBytesWritten();
     }
+    qDebug()<<"Image written with the size of "<< length;
 
-}
-
-void Client::bytesWritten(qint64 bytes)
-{
 }
 
 void Client::readyRead()
@@ -116,9 +106,7 @@ void Client::readyRead()
     }
     else
     {
-        qDebug()<<"IP from client:"<<clientSocket->peerAddress();
         cameraSettingsArr = clientSocket->readAll();
-        qDebug()<<"Received something";
         createSettings();
     }
 }

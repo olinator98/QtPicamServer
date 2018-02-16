@@ -17,15 +17,18 @@ class Camera : public QObject
 {
     Q_OBJECT
 public:
-    void takeImage();
     static Camera *getInstance();
     void setCameraSettings(CameraSettings set);
+
 signals:
     void imageReady(QString pathToImage);
 public slots:
     void sendPicture();
+
 private:
-    Camera();
+    void takeImage();
+    Camera(); //Private constructor to prevent instancing
+    ~Camera();
     char buffer [80];
     QObject *parent;
     QString command;

@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QDebug>
+#include <iostream>
+#include <fstream>
 
 
 class CameraSettings

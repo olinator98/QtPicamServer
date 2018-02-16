@@ -27,8 +27,10 @@ void Server::newConnection()
 {
     if(server->hasPendingConnections())
     {
-
         clientSocket = server->nextPendingConnection();
+        clientSocket = server->nextPendingConnection();
+
+        //currently connected threads
 
         //Looks if theres a already a connected client
         if(connectedClients.size() == 0)
@@ -72,7 +74,6 @@ void Server::removeFromList(QTcpSocket *clientSocket)
         }
         else
         {
-            qDebug()<<"Not found";
         }
     }
 }

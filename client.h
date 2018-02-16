@@ -41,7 +41,6 @@ public slots:
     void sendImage(QString pathToImage);
     void readyRead();
     void disconnected();
-
 };
 
 #endif // CLIENT_H

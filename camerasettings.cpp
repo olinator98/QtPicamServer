@@ -6,6 +6,7 @@ CameraSettings::CameraSettings(char rotationVerticalParam, char rotationHorizont
 
     (rotationVerticalParam == inactive)?(rotationVertical = ""):(rotationVertical = " -rot 90 ");
     (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot hf ");
+    (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -hf ");
     (exposureParam == inactive)?(exposure = " -ex auto"):(exposure = " -ex night");
     (resolutionParam == inactive)?(resolution = " -w 640 -h 480"):(resolution = " -w 1920 -h 1080");
 

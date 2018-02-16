@@ -3,25 +3,19 @@
 CameraSettings::CameraSettings(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam, char infraredOnParam, char takePicParam)
 {
     takePic = takePicParam;
-    qDebug()<<"0"<<"0"<<takePicParam<<infraredOnParam<<resolutionParam<<exposureParam<<rotationHorizontalParam<<rotationVerticalParam;
 
     (rotationVerticalParam == inactive)?(rotationVertical = ""):(rotationVertical = " -rot 90 ");
-    (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot 180   ");
-    (exposureParam == inactive)?(exposure = " -ex auto"):(exposure = "-ex night");
+    (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot hf ");
+    (exposureParam == inactive)?(exposure = " -ex auto"):(exposure = " -ex night");
     (resolutionParam == inactive)?(resolution = " -w 640 -h 480"):(resolution = " -w 1920 -h 1080");
 
     if(infraredOnParam == inactive)
     {
         infraredOn = false;
-        qDebug() << "IR off";
-        //bcm2835_gpio_write(PIN,LOW );
     }
     else
     {
         infraredOn = true;
-        qDebug() << "IR off";
-        //bcm2835_gpio_write(PIN,HIGH);
-
     }
 
 }

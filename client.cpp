@@ -33,7 +33,7 @@ void Client::createSettings()
     char *data = cameraSettingsArr.data();
     if(cameraSettingsArr.size() == 8)
     {
-        //               Check if user would reboot or close connection
+        //Check if user would reboot or close connection
         QString command = "sudo reboot now";
         QProcess *rebootProcess = new QProcess(parent);
 
@@ -43,16 +43,10 @@ void Client::createSettings()
             if(data[7] == zero)
             {
                 //Check completeted, create new camera object
-
                 CameraSettings *settings = new CameraSettings(data[0], data[1], data[2], data[3], data[4], data[5]);
-
                 camera = Camera::getInstance();
-
                 camera->setCameraSettings(*settings);
-                    //camera = new Camera(data[0], data[1], data[2], data[3], data[4], data[5]);
-
-                connect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)), Qt::UniqueConnection);              //Connect the slot for sending the picture to the Object
-                //camera->takeImage();
+                connect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)), Qt::UniqueConnection); //Connect the slot for sending the picture to the Object
             }
             else
             {
@@ -77,13 +71,11 @@ void Client::sendImage(QString pathToImage)
     QByteArray imageArray;
     //Write a QFile to the stream (image as QFile)
     QFile data(pathToImage);
-
     if(!data.open(QIODevice::ReadOnly))
     return;
 
     qint32 length = data.size();
     s << length;
-    //clientSocket->write(reinterpret_cast<char *>(&length), sizeof(length));
 
     while(!data.atEnd())
     {
@@ -93,7 +85,6 @@ void Client::sendImage(QString pathToImage)
         clientSocket->waitForBytesWritten();
     }
     qDebug()<<"Image sended with "<<length<<" bytes to host "<<clientSocket->peerAddress();
-
 }
 
 void Client::readyRead()

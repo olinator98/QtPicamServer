@@ -20,7 +20,11 @@ class Client  : public QObject
     Q_OBJECT
 
 public:
-    Client(QTcpSocket *conn);
+    Client();
+    QTcpSocket *getClientSocket() const;
+    void setClientSocket(QTcpSocket *value);
+    void init(QTcpSocket *conn);
+
 private:
 
     QTcpSocket *clientSocket;
@@ -34,6 +38,7 @@ private:
     QObject *parent;
     Camera *camera;
     void createSettings();
+
 
 
 signals:

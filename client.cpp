@@ -97,8 +97,7 @@ void Client::sendImage(QString pathToImage)
         imageArray.append(data.read(10000));
         clientSocket->waitForBytesWritten();
     }
-    clientSocket->write(imageArray);
-    qDebug()<<"Image sended with "<<length<<" bytes";
+  qDebug()<<"Image sended with "<<length<<" bytes to host "<<clientSocket->peerAddress();
 }
 
 void Client::readyRead()

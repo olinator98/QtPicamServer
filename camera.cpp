@@ -10,7 +10,7 @@ Camera::Camera()
 
 void Camera::takeImage()
 {
-
+        qDebug()<<"1";
         mutex.lock();
         QProcess *process = new QProcess(parent);
         connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
@@ -21,6 +21,7 @@ void Camera::takeImage()
 
 Camera* Camera::getInstance()
 {
+
     //Singleton
     if(!Camera::instance)
         Camera::instance = new Camera();
@@ -30,6 +31,7 @@ Camera* Camera::getInstance()
 
 void Camera::setCameraSettings(CameraSettings set)
 {
+
     if(set.getTakePic() == "0")
     {
         qDebug()<<"No pic";
@@ -60,8 +62,8 @@ void Camera::setCameraSettings(CameraSettings set)
 
 void Camera::sendPicture()
 {
-    //qDebug()<<"2";
-    qDebug()<<"Image taken";
+    qDebug()<<"2";
+    //qDebug()<<"Image taken";
     QString pathToGlory = (QString)buffer + "jpg";
     emit this->imageReady(pathToGlory);
 }

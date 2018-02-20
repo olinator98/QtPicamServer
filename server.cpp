@@ -23,52 +23,81 @@ void Server::doConnect()
     server->listen(QHostAddress::Any, 12345); //Let the server listening
 }
 
+void Server::createClient()
+{
+    qDebug()<<"\n\n-------------checking sucessfull-----------";
+    qDebug()<<"IP-Address: "<<clientSocket->peerAddress();
+    Client *client= new Client(); //create new client
+    connect(client, SIGNAL(signalDisconnected(QTcpSocket*)), this, SLOT(removeFromList(QTcpSocket*))); //Signal when socket disconnects
+
+    client->init(clientSocket);
+
+    connectedSockets.append(clientSocket); //add the socket to a list
+
+    connectedClients.append(client); //add the client to a list
+}
+
+bool Server::checkClient(QTcpSocket *socket)
+{
+    QHostAddress peerAddressClient = clientSocket->peerAddress();
+
+    if(socket->peerAddress() == peerAddressClient)
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+Client *Server::getConnectedInstance()
+{
+    for(int i = 0; i < connectedClients.size(); i++)
+    {
+        if(connectedClients.at(i)->getClientSocket()->peerAddress() == clientSocket->peerAddress())
+        {
+            return connectedClients.at(i);
+        }
+     }
+}
+
 void Server::newConnection()
 {
     if(server->hasPendingConnections())
     {
-
         clientSocket = server->nextPendingConnection();
 
         //Looks if theres a already a connected client
-        if(connectedClients.size() == 0)
+        if(connectedSockets.size() == 0)
         {
-            connectedClients.append(clientSocket);
+            createClient();
         }
         else
         {
             //If theres already a connected client
-            for(int i = 0; i<connectedClients.size(); i++)
+            for(int i = 0; i<connectedSockets.size(); i++)
             {
-                //looks if client is already connected to the server
-                if(connectedClients.at(i) == clientSocket)
+                if(!checkClient(connectedSockets.at(i)))
                 {
-                    clientSocket = connectedClients.at(i);
-                    //use the socket from the list, don't create a new one
+                    qDebug()<<"There's already a client connected from this IP-Address";
+                    client = getConnectedInstance();
+                    client->init(clientSocket);
                 }
-                else
-                {
-                    //create a new one and add it to the QList
-                    connectedClients.append(clientSocket);
-                }
-            }
+             }
         }
-        qDebug()<<"IP-Address: "<<clientSocket->peerAddress();
-        Client *client= new Client(clientSocket); //create new client
-        connect(client, SIGNAL(signalDisconnected(QTcpSocket*)), this, SLOT(removeFromList(QTcpSocket*))); //Signal when socket disconnects
-
     }
-
 }
 
 void Server::removeFromList(QTcpSocket *clientSocket)
 {
     //delete the disconnected socket from the list
-    for(int i = 0; i<connectedClients.size(); i++)
+    for(int i = 0; i<connectedSockets.size(); i++)
     {
-        if(connectedClients.at(i) == clientSocket)
+        if(connectedSockets.at(i)->peerAddress() == clientSocket->peerAddress())
         {
-            connectedClients.removeAt(i);
+            qDebug()<<"removing";
+            connectedSockets.removeAt(i);
         }
         else
         {

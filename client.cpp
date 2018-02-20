@@ -1,14 +1,19 @@
 #include "client.h"
 
-Client::Client(QTcpSocket *conn)
-{
-    parent = nullptr;
-    clientSocket = conn;
-    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-    connect(clientSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 
-    verificationRequired = true;
-    password = "theNextLevel"; //User verification password
+Client::Client()
+{
+
+}
+
+QTcpSocket *Client::getClientSocket() const
+{
+    return clientSocket;
+}
+
+void Client::setClientSocket(QTcpSocket *value)
+{
+    clientSocket = value;
 }
 
 void Client::checkPassword(QByteArray arr)
@@ -64,9 +69,19 @@ void Client::createSettings()
 
 }
 
+void Client::init(QTcpSocket *conn)
+{
+    parent = nullptr;
+    clientSocket = conn;
+    connect(clientSocket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+    connect(clientSocket, SIGNAL(readyRead()), this, SLOT(readyRead()));
+
+    verificationRequired = true;
+    password = "theNextLevel"; //User verification password
+}
+
 void Client::sendImage(QString pathToImage)
 {
-
     QDataStream s(clientSocket);
     QByteArray imageArray;
     //Write a QFile to the stream (image as QFile)
@@ -79,12 +94,10 @@ void Client::sendImage(QString pathToImage)
 
     while(!data.atEnd())
     {
-        imageArray.clear();
-        imageArray = data.read(10000);
-        clientSocket->write(imageArray);
+        imageArray.append(data.read(10000));
         clientSocket->waitForBytesWritten();
     }
-    qDebug()<<"Image sended with "<<length<<" bytes to host "<<clientSocket->peerAddress();
+  qDebug()<<"Image sended with "<<length<<" bytes to host "<<clientSocket->peerAddress();
 }
 
 void Client::readyRead()

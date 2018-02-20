@@ -17,7 +17,6 @@ public:
 private:
     QTcpSocket *clientSocket;
     QTcpServer *server;
-    QList<QTcpSocket*> connectedSockets;
     QList<Client*> connectedClients;
     Client *client;
     void createClient();

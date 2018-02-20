@@ -32,7 +32,7 @@ void Server::createClient()
 
     client->init(clientSocket);
 
-    connectedSockets.append(clientSocket); //add the socket to a list
+    //connectedSockets.append(clientSocket); //add the socket to a list
 
     connectedClients.append(client); //add the client to a list
 }
@@ -57,6 +57,7 @@ Client *Server::getConnectedInstance()
     {
         if(connectedClients.at(i)->getClientSocket()->peerAddress() == clientSocket->peerAddress())
         {
+            qDebug()<<"return old connection";
             return connectedClients.at(i);
         }
      }
@@ -69,18 +70,17 @@ void Server::newConnection()
         clientSocket = server->nextPendingConnection();
 
         //Looks if theres a already a connected client
-        if(connectedSockets.size() == 0)
+        if(connectedClients.size() == 0)
         {
             createClient();
         }
         else
         {
             //If theres already a connected client
-            for(int i = 0; i<connectedSockets.size(); i++)
+            for(int i = 0; i<connectedClients.size(); i++)
             {
-                if(!checkClient(connectedSockets.at(i)))
+                if(!checkClient(connectedClients.at(i)->getClientSocket()))
                 {
-                    qDebug()<<"There's already a client connected from this IP-Address";
                     client = getConnectedInstance();
                     client->init(clientSocket);
                 }
@@ -92,12 +92,12 @@ void Server::newConnection()
 void Server::removeFromList(QTcpSocket *clientSocket)
 {
     //delete the disconnected socket from the list
-    for(int i = 0; i<connectedSockets.size(); i++)
+    for(int i = 0; i<connectedClients.size(); i++)
     {
-        if(connectedSockets.at(i)->peerAddress() == clientSocket->peerAddress())
+        if(connectedClients.at(i)->getClientSocket()->peerAddress() == clientSocket->peerAddress())
         {
             qDebug()<<"removing";
-            connectedSockets.removeAt(i);
+            connectedClients.removeAt(i);
         }
         else
         {

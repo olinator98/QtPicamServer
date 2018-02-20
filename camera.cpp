@@ -10,7 +10,6 @@ Camera::Camera()
 
 void Camera::takeImage()
 {
-        qDebug()<<"1";
         mutex.lock();
         QProcess *process = new QProcess(parent);
         connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
@@ -62,8 +61,8 @@ void Camera::setCameraSettings(CameraSettings set)
 
 void Camera::sendPicture()
 {
-    qDebug()<<"2";
-    //qDebug()<<"Image taken";
+
+    qDebug()<<"Image taken";
     QString pathToGlory = (QString)buffer + "jpg";
     emit this->imageReady(pathToGlory);
 }

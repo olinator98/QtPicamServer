@@ -60,15 +60,8 @@ Client *Server::getConnectedInstance()
         {
             qDebug()<<"return old connection";
             return connectedClients.at(i);
-
         }
-
-
      }
-    if(!found)
-    {
-        createClient();
-    }
 }
 
 void Server::newConnection()

@@ -22,6 +22,7 @@ private:
     void createClient();
     bool checkClient(QTcpSocket *socket);
     Client* getConnectedInstance();
+    bool found;
 public slots:
     void newConnection();
     void removeFromList(QTcpSocket *clientSocket); //if signalDisconnected is true, remove the item from the QList

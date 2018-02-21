@@ -82,6 +82,8 @@ void Client::init(QTcpSocket *conn)
 
 void Client::sendImage(QString pathToImage)
 {
+    disconnect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)));
+    //otherwise, it will send the image to all connected clients
     QDataStream s(clientSocket);
     QByteArray imageArray;
     //Write a QFile to the stream (image as QFile)
@@ -98,6 +100,8 @@ void Client::sendImage(QString pathToImage)
         clientSocket->waitForBytesWritten();
     }
   qDebug()<<"Image sended with "<<length<<" bytes to host "<<clientSocket->peerAddress();
+  clientSocket->write(imageArray);
+
 }
 
 void Client::readyRead()

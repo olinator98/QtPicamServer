@@ -15,6 +15,7 @@ void Server::doConnect()
 {
     clientSocket = new QTcpSocket(this);
     server = new QTcpServer();
+    found = false;
 
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnection())); //this signal is emmited every time a new connection is available
 
@@ -81,10 +82,16 @@ void Server::newConnection()
             {
                 if(!checkClient(connectedClients.at(i)->getClientSocket()))
                 {
+                    qDebug()<<"Host found";
                     client = getConnectedInstance();
                     client->init(clientSocket);
+                    found = true;
                 }
              }
+            if(!found)
+            {
+                createClient();
+            }
         }
     }
 }

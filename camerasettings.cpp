@@ -3,7 +3,7 @@
 CameraSettings::CameraSettings(char rotationVerticalParam, char rotationHorizontalParam, char exposureParam, char resolutionParam, char infraredOnParam, char takePicParam)
 {
     takePic = takePicParam;
-
+    //create command for raspistill
     (rotationVerticalParam == inactive)?(rotationVertical = ""):(rotationVertical = " -rot 90 ");
     (rotationHorizontalParam == inactive)?(rotationHorizontal = ""):(rotationHorizontal = " -rot hf ");
     (exposureParam == inactive)?(exposure = " -ex auto"):(exposure = " -ex night");

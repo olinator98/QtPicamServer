@@ -36,21 +36,21 @@ void Client::checkPassword(QByteArray arr)
 void Client::createSettings()
 {
     char *data = cameraSettingsArr.data();
-    if(cameraSettingsArr.size() == 8)
+    if(cameraSettingsArr.size() == 8) 
     {
         //Check if user would reboot or close connection
         QString command = "sudo reboot now";
         QProcess *rebootProcess = new QProcess(parent);
 
         const char zero = '0';
-        if (data[6] == zero)
+        if (data[6] == zero) //reboot bit
         {
-            if(data[7] == zero)
+            if(data[7] == zero) //close connection bit
             {
                 //Check completeted, create new camera object
-                CameraSettings *settings = new CameraSettings(data[0], data[1], data[2], data[3], data[4], data[5]);
+                CameraSettings *settings = new CameraSettings(data[0], data[1], data[2], data[3], data[4], data[5]); //new settings object
                 camera = Camera::getInstance();
-                camera->setCameraSettings(*settings);
+                camera->setCameraSettings(*settings); //setTheCameraSettings to the camera
                 connect(camera, SIGNAL(imageReady(QString)), this, SLOT(sendImage(QString)), Qt::UniqueConnection); //Connect the slot for sending the picture to the Object
             }
             else
@@ -96,16 +96,18 @@ void Client::sendImage(QString pathToImage)
 
     while(!data.atEnd())
     {
-        imageArray.append(data.read(10000));
+        //readData by junks of 10000 and add them to a qbytearray
+        imageArray.append(data.read(10000)); 
         clientSocket->waitForBytesWritten();
     }
   qDebug()<<"Image sended with "<<length<<" bytes to host "<<clientSocket->peerAddress();
-  clientSocket->write(imageArray);
+  clientSocket->write(imageArray); //write qBytearray to socket
 
 }
 
 void Client::readyRead()
 {
+    //look if password was already inserted correctly
     if(verificationRequired == true) //First login
     {
         QByteArray arr;
@@ -121,7 +123,7 @@ void Client::readyRead()
 
 void Client::disconnected()
 {
-    emit this->signalDisconnected(clientSocket);
+    emit this->signalDisconnected(clientSocket); //call signal to delete the client from the qlist (server.cpp)
     qDebug()<<"Connection closed";
     clientSocket->close();
     delete clientSocket;

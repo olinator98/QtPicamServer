@@ -12,7 +12,7 @@ void Camera::takeImage()
 {
         mutex.lock();
         QProcess *process = new QProcess(parent);
-        connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture()));
+        connect(process, SIGNAL(finished(int)), this, SLOT(sendPicture())); //connect slot processFinished -> image taken
         process->start(cameraCommand);
         mutex.unlock();
 
@@ -47,11 +47,11 @@ void Camera::setCameraSettings(CameraSettings set)
         strftime(buffer, 80, "Image_%a_%F_%I:%M%p.", timeinfo);
         if(set.getInfraredOn())
         {
-            bcm2835_gpio_write(PIN,HIGH);
+            bcm2835_gpio_write(PIN,HIGH); //turn on infrared
         }
         else
         {
-            bcm2835_gpio_write(PIN,LOW );
+            bcm2835_gpio_write(PIN,LOW ); //turn off infrared
         }
         cameraCommand = "raspistill -n "+set.getRotationVertical()+set.getRotationHorizontal()+set.getExposure()+set.getResolution()+" -o "+buffer+"jpg";
         takeImage();
@@ -61,9 +61,8 @@ void Camera::setCameraSettings(CameraSettings set)
 
 void Camera::sendPicture()
 {
-
     qDebug()<<"Image taken";
-    QString pathToGlory = (QString)buffer + "jpg";
-    emit this->imageReady(pathToGlory);
+    QString pathToGlory = (QString)buffer + "jpg"; //pathToImage
+    emit this->imageReady(pathToGlory); //call signal from client.cpp to send image to client
 }
 
